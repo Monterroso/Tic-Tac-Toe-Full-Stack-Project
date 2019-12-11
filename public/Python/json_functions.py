@@ -29,8 +29,9 @@ def game_from_json(json_obj):
 
   object_json = json.loads(json_obj)
 
-  if object_json["Type"] != "Game":
-    raise AttributeError("The json object is not a Game object, it is a {0}".format(object_json["Type"]))
+
+  if "Type" not in object_json or object_json["Type"] != "Game":
+    raise AttributeError("The json object is not a Game object, it is a {0}".format(object_json.keys()))
 
   #Otherwise we know it is a json object
   game_obj = object_json["Object"] 

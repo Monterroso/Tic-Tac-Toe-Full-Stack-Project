@@ -35,7 +35,7 @@ class Game:
   """
 
   def __init__(self, players, x_dist, y_dist, num_to_win, turn_start=0, max_turns=1000,\
-     winner=-1, brd=None, board_history=None):
+     winner=0, brd=None, board_history=None):
     """Creates a game that can be started from start to finish
 
     Creates the game board and sets turn counter to 0
@@ -161,6 +161,9 @@ class Game:
       {JSON} -- JSON object representing this game
 
     """
+
+    if self.is_game_over(): 
+      return self.to_json()
 
     turn_result = self._turn_cycle()
     if turn_result != 0:
