@@ -9,16 +9,6 @@ require('../models/Game');
 
 const Game = mongoose.model('game');
 
-/*
-Get request gets a game with the given id, or all games are returned
-
-Post adds new game at the current id
-
-Path updates a game with a valid move
-
-
-
-*/
 
 module.exports = (app) => {
 
@@ -57,6 +47,7 @@ module.exports = (app) => {
     let options = {args: [String(player1), String(player2), String(xDist), String(yDist), String(numToWin)]};
 
     callGame(options, function(gameString) {
+
       gameResult = createJSON(gameString);
 
       gameResult._id = id;
@@ -69,7 +60,7 @@ module.exports = (app) => {
     });
   });
 
-  //This should play the game out. 
+  //This should play the game out with the given choice
   app.patch("/api/games/:id", function(req, res) {
     let id = req.params.id;
 
@@ -107,167 +98,10 @@ module.exports = (app) => {
             
           });
         }
-        // else {
-        //   let pyshell = new PythonShell(
-        //     path.join(__dirname, "../", "public/Python/python_controller.py",
-        //     game.game,
-        //     choice
-        //   ));
-        //   let gameResult;
-
-        //   pyshell.on('message', function (message) {
-        //     gameResult = message;
-        //   });
-
-        //   pyshell.end(function (err, code, signal) {
-        //     if (err) {console.log(err); throw err;}
-
-        //     //create the game object in mongoose
-        //     gameObject = {
-        //       isCurrentGame: true,
-        //       choices: createJSON(gameResult)["choices"],
-        //       isOver: gameResult["is_over"],
-        //       winner: gameResult["winner"],
-        //       game: createJSON(gameResult)["game_json"]["Object"]
-        //     }
-
-        //     let newGame = new Game(gameObject);
-
-        //     newGame.save();
-
-        //     res.send(gameObject);
-        //     console.log('finished');
-        //   });
-        // }
       }
       else {
         res.send(`A game with id of ${id} currently does not exist`);
       }
-    })
+    });
   });
-
-  // //Gets the games, id to the specific games, create new game if no current game is available
-  // app.get("/api/games", function(req, res) {
-  //   let id = req.query.id;
-    
-  //   //This gets the current game
-  //   if (id === "currentGame") {
-  //     //Mongoose operation to find the current game
-  //     Game.findOne({isCurrentGame: true}, (err, game) => {
-  //       if (err) console.log(err); //If an error has occured
-  //       else if (game) { //If a game is found
-  //         console.log("A current game was found!");
-  //         res.send(game);
-  //       }
-  //       else { //If a game is not found
-  //         console.log("A new game must be constructed");
-  //         let pyshell = new PythonShell(path.join(__dirname, "../", "public/Python/python_controller.py"));
-  //         let gameResult;
-
-  //         pyshell.on('message', function (message) {
-  //           gameResult = message;
-  //         });
-
-  //         pyshell.end(function (err, code, signal) {
-  //           if (err) {console.log(err); throw err;}
-
-  //           //create the game object in mongoose
-  //           gameObject = {
-  //             isCurrentGame: true,
-  //             choices: createJSON(gameResult)["choices"],
-  //             isOver: gameResult["is_over"],
-  //             winner: gameResult["winner"],
-  //             game: createJSON(gameResult)["game_json"]["Object"]
-  //           }
-
-
-
-  //           let newGame = new Game(gameObject);
-
-  //           newGame.save();
-
-  //           res.send(gameObject);
-  //           console.log('finished');
-  //         });
-  //       }
-  //     });
-  //   }
-  //   else {
-  //     res.send("Unfortunately at this time no other requests are available, use id=currentGame");
-  //   }
-  // });
-
-  // app.patch("/api/games", function(req, res) {
-  //   let id = req.query.id;
-  //   let choice = req.query.choice;
-
-  //   if (id === "currentGame") {
-  //     //Check if there is a current game
-
-  //     Game.findOne({isCurrentGame: true}, (err, game) => {
-  //       if (err) {console.log(err);}
-  //       else if (game){
-  //         //check if valid choice
-  //         if (choice >= game.choices.length) {
-  //           res.send(`There are only ${game.choices.length + 1} choices, your choice number was out of bounds`);
-  //         }
-  //         else {
-  //           let pyshell = new PythonShell(
-  //             path.join(__dirname, "../", "public/Python/python_controller.py",
-  //             game.game,
-  //             choice
-  //           ));
-  //           let gameResult;
-
-  //           pyshell.on('message', function (message) {
-  //             gameResult = message;
-  //           });
-  
-  //           pyshell.end(function (err, code, signal) {
-  //             if (err) {console.log(err); throw err;}
-  
-  //             //create the game object in mongoose
-  //             gameObject = {
-  //               isCurrentGame: true,
-  //               choices: createJSON(gameResult)["choices"],
-  //               isOver: gameResult["is_over"],
-  //               winner: gameResult["winner"],
-  //               game: createJSON(gameResult)["game_json"]["Object"]
-  //             }
-  
-  //             let newGame = new Game(gameObject);
-  
-  //             newGame.save();
-  
-  //             res.send(gameObject);
-  //             console.log('finished');
-  //           });
-  //         }
-  //       }
-  //       else {
-  //         res.send("A default game was not found over here");
-  //       }
-  //     })
-
-  //   }
-  // });
-  
-  // app.get("/", function(req, res) {
-  //   let pyshell = new PythonShell(path.join(__dirname, "../", "public/Python/python_controller.py"));
-  //   let gameResult;
-  
-  //   pyshell.on('message', function (message) {
-  //     gameResult = message;
-  //   });
-  
-  //   pyshell.end(function (err, code, signal) {
-  //     if (err) {console.log(err); throw err;}
-  //     res.send(gameResult);
-  //     currentGame = createJSON(gameResult)["game_json"]["Object"];
-  //     currentBoard = currentGame["board"];
-  //     currentOptions = createJSON(gameResult)["choices"];
-  //     //res.render("home", {game: createJSON(gameResult), currentGame: currentGame, currentOptions: currentOptions});
-  //     console.log('finished');
-  //   });
-  // });
 }

@@ -5,7 +5,6 @@ const {Schema} = mongoose;
 const GameInfoSchema = new Schema ({
   _id: Number,
   choices: {},
-  isOver: Boolean,
   winner: Number,
   game_json: {type: {}, required: true}
 });

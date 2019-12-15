@@ -2,10 +2,8 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const ejs = require("ejs");
 const mongoose = require("mongoose");
 let {PythonShell} = require('python-shell');
-const createJSON = require("./helperFunctions/createJSON");
 
 
 // IMPORT MODELS

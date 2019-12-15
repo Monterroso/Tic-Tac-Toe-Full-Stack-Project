@@ -1,24 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// /client/src/App.js
+
+import React, { useState, useEffect } from "react";
+
+
+// SERVICES
+import gameService from './services/gameService';
+
+// COMPONENTS
+import GameDisplay from "./components/GameDisplay.jsx";
+
+const uuidv1 = require('uuid/v1');
 
 function App() {
+  const [games, setGames] = useState(null);
+
+  useEffect(() => {
+    if(!games) {
+      getGames();
+    }
+  })
+
+  const getGames = async () => {
+    let res = await gameService.getAll();
+    setGames(res);
+  }
+
+  const renderGame = game => {
+    return (
+      <GameDisplay key={uuidv1()} id={game._id} winner={game.winner} grid={game.game_json.Object.board.Object.grid}/>
+    );
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ul className="list">
+        {(games && games.length > 0) ? (
+          games.map(game => renderGame(game))
+        ) : (
+          <p>There are no games in the database currently</p>
+        )}
+      </ul>
     </div>
   );
 }

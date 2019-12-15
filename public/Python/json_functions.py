@@ -59,8 +59,10 @@ def player_from_json(json_obj):
     {Player} -- The decoded player object
 
   """
+  dic_obj = json_obj
 
-  dic_obj = json.loads(json_obj)
+  if not isinstance(json_obj,dict):
+    dic_obj = json.loads(json_obj)
 
   if not issubclass(eval(dic_obj["Type"]), Player):
     raise AttributeError("This is not a player dictionary object, it is a {0}".format(dic_obj["Type"]))
@@ -81,8 +83,12 @@ def board_from_json(json_obj):
     {Board} -- The decoded Board object
 
   """
+  dic_obj = json_obj
 
-  dic_obj = json.loads(json_obj)
+  if not isinstance(json_obj,dict):
+    dic_obj = json.loads(json_obj)
+
+  
 
   if dic_obj["Type"] != "Board":
     raise AttributeError("This is not a Board dictionary object, it is a {0}".format(dic_obj["Type"]))
