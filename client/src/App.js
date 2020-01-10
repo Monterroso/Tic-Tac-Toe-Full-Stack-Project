@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 
-
 // SERVICES
 import gameService from './services/gameService';
 
@@ -12,6 +11,8 @@ import GameDisplay from "./components/GameDisplay.jsx";
 const uuidv1 = require('uuid/v1');
 
 function App() {
+
+  console.log(window.innerWidth);
   const [games, setGames] = useState(null);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ function App() {
 
   const renderGame = game => {
     return (
-      <GameDisplay key={uuidv1()} id={game._id} winner={game.winner} grid={game.game_json.Object.board.Object.grid}/>
+      <GameDisplay id={game._id} winner={game.winner} grid={game.game_json.Object.board.Object.grid}/>
     );
   };
 
@@ -35,7 +36,7 @@ function App() {
     <div className="App">
       <ul className="list">
         {(games && games.length > 0) ? (
-          games.map(game => renderGame(game))
+          games.map(game => <li key={uuidv1()}>{renderGame(game)}</li>)
         ) : (
           <p>There are no games in the database currently</p>
         )}
