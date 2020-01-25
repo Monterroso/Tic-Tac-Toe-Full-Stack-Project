@@ -21,9 +21,9 @@ function createJSON(jsonString) {
     }
   }
   catch (e) { 
-    console.log(`An error was caught, the error is ${e}`);
-    console.log(`The object type is ${typeof jsonString}`)
-    console.log(`The thing to be parsed was  ${jsonString}`);
+    // console.log(`An error was caught, the error is ${e}`);
+    // console.log(`The object type is ${typeof jsonString}`)
+    // console.log(`The thing to be parsed was  ${jsonString}`);
   }
   return jsonString;
 }

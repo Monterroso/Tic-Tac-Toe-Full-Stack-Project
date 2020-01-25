@@ -12,7 +12,6 @@ const uuidv1 = require('uuid/v1');
 
 function App() {
 
-  console.log(window.innerWidth);
   const [games, setGames] = useState(null);
 
   useEffect(() => {
@@ -22,8 +21,12 @@ function App() {
   })
 
   const getGames = async () => {
-    let res = await gameService.getAll();
+    let res = await gameService.getAllGames();
     setGames(res);
+  }
+
+  const getPlayers = async () => {
+    let res = await gameService.getAllPlayers();
   }
 
   const renderGame = game => {
@@ -31,7 +34,7 @@ function App() {
       <GameDisplay id={game._id} winner={game.winner} grid={game.game_json.Object.board.Object.grid}/>
     );
   };
-
+  getPlayers();
   return (
     <div className="App">
       <ul className="list">

@@ -1,16 +1,83 @@
-const mongoose = require("mongoose");
-const {ObjectId} = require('mongodb');
-const {PythonShell} = require('python-shell');
-const path = require("path");
+const passport = require("passport");
+const session = require("express-session");
 
 const createJSON = require('../helperFunctions/createJSON');
 const callGame = require('../helperFunctions/callGame');
-require('../models/Game');
-
-const Game = mongoose.model('game');
+const {Game, Player} = require('../models/Models');
 
 
 module.exports = (app) => {
+
+  app.use(session({
+    secret: process.env.SECRET,
+    resave: false, 
+    saveUninitialized: false
+  }));
+  
+  app.use(passport.initialize());
+  app.use(passport.session());
+  
+  passport.use(Player.createStrategy());
+  passport.serializeUser(Player.serializeUser());
+  passport.deserializeUser(Player.deserializeUser());
+
+  //Block to handle player data
+  //IMPORTANT DISABLE BEFORE PRODUCTION
+  app.get("/api/players", function(req, res) {
+    Player.find({}, (err, players) => {
+      if (err) {console.log(err); throw err;}
+
+      console.log(`${players.length} players were found and returned`);
+      res.send(players);
+    });
+  });
+
+  //Creates a new player with given parameters
+  app.post("/api/players/register", function(req, res) {
+    let userName = req.body.username;
+    let passWord = req.body.password;
+
+    Player.register({username: userName}, passWord, function(err, user) {
+      if (err) {
+        console.log(err);
+        res.send("There was an error registering the player in question");
+      } else {
+        passport.authenticate("local")(req, res, function() {
+          res.send("The player was successfully registered");
+        })
+      }
+    })
+  });
+
+  //Login as the current player
+  app.post("/api/players/login", function(req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const user = new Player({
+      username: username,
+      password: password
+    });
+
+    req.login(user, function(err) {
+      if (err) {
+        console.log(err);
+        res.send("There was an error while logging in");
+      } else {
+        passport.authenticate("local")(req, res, function() {
+          res.send("You have successfully logged in!");
+        });
+      }
+    })
+  });
+
+  app.post("/api/players/logout", function(req, res) {
+    req.logout();
+    res.send("You have succesfully logged out");
+  })
+
+
+  //Block to handle game data
 
   //Should return all the games
   app.get("/api/games", function(req, res) {
@@ -38,25 +105,32 @@ module.exports = (app) => {
   app.post("/api/games/:id", async function(req, res) {
     let id = req.params.id;
 
-    let player1 = req.body.player1;
-    let player2 = req.body.player2;
-    let xDist = req.body.xDist;
-    let yDist = req.body.yDist;
-    let numToWin = req.body.numToWin;
+    //Check if a game with the id already exists. If it does, we deny the request
+    Game.findOne({_id: id}, (err, game) => {
+      if (!game) {
+        let player1 = req.body.player1;
+        let player2 = req.body.player2;
+        let xDist = req.body.xDist;
+        let yDist = req.body.yDist;
+        let numToWin = req.body.numToWin;
 
-    let options = {args: [String(player1), String(player2), String(xDist), String(yDist), String(numToWin)]};
+        let options = {args: [String(player1), String(player2), String(xDist), String(yDist), String(numToWin)]};
 
-    callGame(options, function(gameString) {
+        callGame(options, function(gameString) {
 
-      gameResult = createJSON(gameString);
+          gameResult = createJSON(gameString);
 
-      gameResult._id = id;
+          gameResult._id = id;
 
-      let newGame = Game(gameResult);
-      newGame.save();
+          let newGame = Game(gameResult)  ;
+          newGame.save();
 
-      console.log(`New game created with id ${id}`);
-      res.send(gameResult);  
+          console.log(`New game created with id ${id}`);
+          res.send(gameResult);  
+        });
+      } else {
+        res.send(`A game of tag ${id} already exists in the database`);
+      }
     });
   });
 

@@ -1,20 +1,27 @@
 //jshint esversion:6
 
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 let {PythonShell} = require('python-shell');
 
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+
 
 // IMPORT MODELS
-require('./models/Game');
+// require('./models/Models');
 
 const app = express();
 
-app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+
+//IMPORT ROUTES
+require('./routes/gameRoutes')(app);  
 
 //Redirects paths from the back end to the front end
 if (process.env.NODE_ENV === 'production') {
@@ -27,18 +34,7 @@ if (process.env.NODE_ENV === 'production') {
 
 }
 
-//Mongoose set up
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tictactoeDB',
- {
-  useUnifiedTopology: true,
-  useNewUrlParser: true
-})
-.catch((err) => {
-  console.log(err);
-});
 
-//IMPORT ROUTES
-require('./routes/gameRoutes')(app);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

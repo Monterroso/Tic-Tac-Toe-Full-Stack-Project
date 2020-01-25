@@ -1,8 +1,13 @@
 import axios from 'axios';
 
 export default {
-  getAll: async () => {
+  getAllGames: async () => {
     let res = await axios.get(`/api/games`);
+    return res.data || [];
+  },
+
+  getAllPlayers: async () => {
+    let res = await axios.get('/api/players');
     return res.data || [];
   }
 }
