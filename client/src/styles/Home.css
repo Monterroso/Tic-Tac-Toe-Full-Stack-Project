@@ -1,0 +1,55 @@
+/*Background */
+body {
+    background: url("../images/buried.png") !important;
+    background-color: rgb(150, 200, 255) !important;
+  }
+  
+  h3 {
+    font-size: 5rem;
+  }
+  
+  p {
+    font-size: 2rem;
+  }
+  
+  ul {
+    padding: 0;
+  }
+  
+  .board {
+    margin-left: 50%;
+    transform: translate(-50%, 0);
+    display: table;
+  }
+  
+  /*Grid display style*/
+  .grid-display {
+    text-align: center;
+  }
+  
+  /* Grid Row style */
+  .grid-row {
+    display: table-row;
+  }
+  
+  /* Grid item style */
+  .grid-item {
+    display: table-cell;
+    border: .3rem solid rgb(46, 0, 65);
+  }
+  
+  .border-left {
+    border-left: transparent;
+  }
+  
+  .border-top {
+    border-top: transparent;
+  }
+  
+  .border-right {
+    border-right: transparent;
+  }
+  
+  .border-bottom {
+    border-bottom: transparent;
+  }

@@ -4,21 +4,44 @@
   -webkit-box-sizing: border-box;
 }
 
-/*Background */
 body {
-  background: url("./buried.png") !important;
-  background-color: rgb(150, 200, 255) !important;
+  background-color: lightblue;
 }
 
-h3 {
-  font-size: 5rem;
+.navbar {
+  margin-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+  list-style: none;
+  background-color: lightskyblue;
 }
 
-p {
-  font-size: 2rem;
+.navbar li {
+  display: inline-block;
+  padding: 1rem 2rem;
 }
 
-ul {
+.navbar .active {
+  color: white;
+  background-color: blue;
+}
+
+.navbar .active:hover {
+  background-color: lightblue;
+  color: black;
+  cursor: pointer;
+}
+
+.navbar .last {
+  float: right;
+}
+
+.navbar .last:hover {
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.list {
   padding: 0;
 }
 
@@ -58,4 +81,43 @@ ul {
 
 .border-bottom {
   border-bottom: transparent;
+}
+
+/*Login Register Styling*/
+.input-box {
+  margin-top: 10rem;
+  margin-left: 50%;
+  transform: translate(-50%, 0);
+  box-shadow: 0px 0px 21px 8px rgba(0,0,0,0.45);
+  width: 50%;
+  padding: 3rem;
+  background-color: white;
+
+}
+
+.input-box input {
+  /* cursor: inherit;   */
+  padding: .5rem 2rem;
+  margin-left: 50%;
+  transform: translate(-50%, 0);
+  border-style: none;
+  border: .1px solid gray;
+  background-color: lightgray;
+}
+
+.input-box .input-field {
+  margin: 2rem 0;
+  margin-left: 50%;
+
+  display: block;  
+  width: 80%;
+}
+
+.input-box h3 {
+  text-align: center;
+}
+
+.input-box p {
+  text-align: center;
+  margin: 0 0 2rem 0;
 }

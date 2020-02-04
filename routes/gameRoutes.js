@@ -34,16 +34,21 @@ module.exports = (app) => {
 
   //Creates a new player with given parameters
   app.post("/api/players/register", function(req, res) {
+
     let userName = req.body.username;
     let passWord = req.body.password;
 
+
     Player.register({username: userName}, passWord, function(err, user) {
       if (err) {
-        console.log(err);
-        res.send("There was an error registering the player in question");
+        res.status(409);
+        console.log(`Error in creating user: ${err.name}`);
+        res.send(err.name);
       } else {
         passport.authenticate("local")(req, res, function() {
-          res.send("The player was successfully registered");
+          res.status(200);
+          console.log(`User created is ${req.user}`);
+          res.send(req.user);
         })
       }
     })
@@ -54,33 +59,99 @@ module.exports = (app) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const user = new Player({
-      username: username,
-      password: password
+    const rememberMe = req.body.rememberMe;
+
+    // const user = new Player({
+    //   username: username,
+    //   password: password
+    // });
+
+    // passport.authenticate("local", (error, user, info) => {
+    //   // console.log(req.body);
+    //   // console.log("Error is " + error);
+    //   // console.log("User is " + user);
+    //   // console.log("Info is " + info);
+    //   if (error) {
+    //     res.status(401).send(error);
+    //   } else if (!user) {
+    //     res.status(401).send(info);
+    //   } 
+    // })(req, res, () => {
+     passport.authenticate("local")(req, res, () => {
+      res.status(200);
+      // if (rememberMe) {
+      //   req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; //Cookie lasts for 30 days
+      // }
+      // else {
+      //   req.session.cookie.expires = false; // Cookie expires at end of session
+      // }
+      console.log(`User successfully logged in on backend login route, user is ${req.user.username}`);
+      res.send(req.user);
     });
 
-    req.login(user, function(err) {
-      if (err) {
-        console.log(err);
-        res.send("There was an error while logging in");
-      } else {
-        passport.authenticate("local")(req, res, function() {
-          res.send("You have successfully logged in!");
-        });
-      }
-    })
+    // req.login(user, function(err) {
+    //   if (err) {
+    //     res.status(404);
+    //     console.log(`Error in loggin in user: ${err.name}`);
+    //     res.send(err.name);
+    //   } else {
+    //     console.log("passport authenticate is called");
+    //     passport.authenticate("local")(req, res, function() {
+    //       res.status(200);
+    //       // if (rememberMe) {
+    //       //   req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; //Cookie lasts for 30 days
+    //       // }
+    //       // else {
+    //       //   req.session.cookie.expires = false; // Cookie expires at end of session
+    //       // }
+    //       console.log(`User successfully logged in on backend login route, user is ${req.user}`);
+    //       res.send(req.user);
+    //     });
+    //   }
+    // })
   });
 
-  app.post("/api/players/logout", function(req, res) {
-    req.logout();
-    res.send("You have succesfully logged out");
-  })
+  app.get("/api/players/logout", function(req, res) {
+
+    req.session = null;
+    res.status(204);
+    console.log("The session should be destroyed");
+    // req.session.destroy((err) => {
+    //   if(err) return (err) => console.log("There was an error destroying the session");
+    //   console.log("The session should be destroyed");
+    //   // req.logout();
+    //   res.status(204);
+    // });
+    // res.status(204);
+    // if (!req.isAuthenticated()) {
+    //   console.log("In logout backend, user was logged out successfully");
+    // }
+    // else {
+    //   console.log("In logout backend, user failed to log out");
+    // }
+  });
+
+  app.get("/api/players/checklogin", function(req, res) {
+    if (req.isAuthenticated()) {
+      console.log("In checklogin backend, browser is currently logged in");
+      res.send(true);
+    }
+    else {
+      console.log("In checklogin backend, browser is not logged in");
+      res.send(false);
+    }
+  }) 
 
 
   //Block to handle game data
 
-  //Should return all the games
+  //Should return all the games with the logged in user, should return none if not logged in
   app.get("/api/games", function(req, res) {
+
+    // passport.authenticate("local")(req, res. function() {
+    //   req.user
+    // })
+
     Game.find({}, (err, games) => {
       if (err) {console.log(err); throw err;}
       

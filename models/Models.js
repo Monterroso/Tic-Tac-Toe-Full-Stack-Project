@@ -28,6 +28,7 @@ const PlayerInfoSchema = new Schema ({
   userName: String,
   passWord: String
 });
+
 PlayerInfoSchema.plugin(passportLocalMongoose);
 
 const Game = mongoose.model("game", GameInfoSchema);
