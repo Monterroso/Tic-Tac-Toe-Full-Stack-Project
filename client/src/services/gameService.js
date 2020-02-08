@@ -127,7 +127,8 @@ export default {
       console.log("These is the debug info for logoutPlayer");
     });
     
-    // return res.data || [];
+    console.log(res);
+    return res.data || [];
   }
 
   

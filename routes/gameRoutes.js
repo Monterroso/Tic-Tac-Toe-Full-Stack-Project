@@ -79,12 +79,12 @@ module.exports = (app) => {
     // })(req, res, () => {
      passport.authenticate("local")(req, res, () => {
       res.status(200);
-      // if (rememberMe) {
-      //   req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; //Cookie lasts for 30 days
-      // }
-      // else {
-      //   req.session.cookie.expires = false; // Cookie expires at end of session
-      // }
+      if (rememberMe) {
+        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; //Cookie lasts for 30 days
+      }
+      else {
+        req.session.cookie.expires = false; // Cookie expires at end of session
+      }
       console.log(`User successfully logged in on backend login route, user is ${req.user.username}`);
       res.send(req.user);
     });
@@ -112,16 +112,16 @@ module.exports = (app) => {
   });
 
   app.get("/api/players/logout", function(req, res) {
-
-    req.session = null;
-    res.status(204);
-    console.log("The session should be destroyed");
-    // req.session.destroy((err) => {
-    //   if(err) return (err) => console.log("There was an error destroying the session");
-    //   console.log("The session should be destroyed");
-    //   // req.logout();
-    //   res.status(204);
-    // });
+    console.log(`Before logout authenticated is ${req.isAuthenticated()}`);
+    req.session.destroy((err) => {
+      if(err) return (err) => console.log("There was an error destroying the session");
+      console.log("The session should be destroyed");
+      // req.logout();
+      console.log(`After logout authenticated is ${req.isAuthenticated()}`);
+      res.status(204);
+      res.send("Logged out");
+      
+    });
     // res.status(204);
     // if (!req.isAuthenticated()) {
     //   console.log("In logout backend, user was logged out successfully");
@@ -148,17 +148,20 @@ module.exports = (app) => {
   //Should return all the games with the logged in user, should return none if not logged in
   app.get("/api/games", function(req, res) {
 
-    // passport.authenticate("local")(req, res. function() {
-    //   req.user
-    // })
-
-    Game.find({}, (err, games) => {
-      if (err) {console.log(err); throw err;}
-      
-      console.log(`${games.length} games were found and returned`);
-      res.send(games);
-    });
+    if (req.isAuthenticated()) {
+      // Game.find({players : {$all : [req.user]}}, (err, games) => {
+      Game.find({}, (err, games) => {
+        if (err) {console.log(err); throw err;}
+        
+        console.log(`${games.length} games were found and returned`);
+        res.send(games);
+      })
+    } else {
+      console.log("The showcase is being shown as the user is not logged in");
+      res.send([]);
+    } 
   });
+
 
   //Should return the game with the given id
   app.get("/api/games/:id", function(req, res) {
@@ -176,6 +179,8 @@ module.exports = (app) => {
   app.post("/api/games/:id", async function(req, res) {
     let id = req.params.id;
 
+  
+
     //Check if a game with the id already exists. If it does, we deny the request
     Game.findOne({_id: id}, (err, game) => {
       if (!game) {
@@ -185,7 +190,10 @@ module.exports = (app) => {
         let yDist = req.body.yDist;
         let numToWin = req.body.numToWin;
 
-        let options = {args: [String(player1), String(player2), String(xDist), String(yDist), String(numToWin)]};
+        let player1String = player1.includes('&')? "UserPlayer" : "RandomPlayer";
+        let player2String = player1.includes('&')? "UserPlayer" : "RandomPlayer";
+
+        let options = {args: [String(player1String), String(player2String), String(xDist), String(yDist), String(numToWin)]};
 
         callGame(options, function(gameString) {
 
@@ -193,7 +201,9 @@ module.exports = (app) => {
 
           gameResult._id = id;
 
-          let newGame = Game(gameResult)  ;
+          gameResult.players = [player1, player2];
+
+          let newGame = Game(gameResult);
           newGame.save();
 
           console.log(`New game created with id ${id}`);

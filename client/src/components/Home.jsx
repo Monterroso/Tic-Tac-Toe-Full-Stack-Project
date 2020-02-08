@@ -19,10 +19,10 @@ function Home() {
     }
   });
 
-  // //if user is already logged in then go to login
-  // useEffect(() => {
-  //   gameService.checkLogin(isLoggedIn => !isLoggedIn && navigate("/login"));
-  // }, []);
+  //if user is already logged in then go to login
+  useEffect(() => {
+    gameService.checkLogin(isLoggedIn => !isLoggedIn && navigate("/login"));
+  }, []);
 
   const getGames = async () => {
     let res = await gameService.getAllGames();
@@ -39,6 +39,7 @@ function Home() {
     console.log("We are redirecting to the login page, because the player should be logged out");
     //We check if the player has indeed been logged out 
     gameService.checkLogin(isLoggedIn => !isLoggedIn && navigate("/login"));
+    // navigate("/login");
   }
 
   function logOut() {

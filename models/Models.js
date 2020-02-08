@@ -20,6 +20,7 @@ const GameInfoSchema = new Schema ({
   _id: Number,
   choices: {},
   winner: Number,
+  players: [String],
   game_json: {type: {}, required: true}
 });
 GameInfoSchema.plugin(passportLocalMongoose);
