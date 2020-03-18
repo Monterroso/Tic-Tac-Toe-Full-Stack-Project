@@ -5,6 +5,7 @@ import gameService from '../services/gameService';
 
 // COMPONENTS
 import GameDisplay from "./GameDisplay.jsx";
+import Navbar from "./Navbar.jsx";
 
 import uuid from "uuid";
 import { navigate } from "hookrouter";
@@ -35,29 +36,10 @@ function Home() {
     );
   };
 
-  function redir() {
-    console.log("We are redirecting to the login page, because the player should be logged out");
-    //We check if the player has indeed been logged out 
-    gameService.checkLogin(isLoggedIn => !isLoggedIn && navigate("/login"));
-    // navigate("/login");
-  }
-
-  function logOut() {
-    console.log("logOut function called in Home.jsx");
-    gameService.logoutPlayer(redir);
-    
-  }
 
   return (
     <div className="App">
-      <ul className="navbar">
-        <li className="active">
-          Home
-        </li>
-        <li className="last" onClick={logOut}>
-          Logout
-        </li>
-      </ul>
+      <Navbar></Navbar>
       <ul className="list">
         {(games && games.length > 0) ? (
           games.map(game => <li key={uuid.v1()}>{renderGame(game)}</li>)

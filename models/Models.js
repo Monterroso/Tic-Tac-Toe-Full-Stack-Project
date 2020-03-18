@@ -26,8 +26,8 @@ const GameInfoSchema = new Schema ({
 GameInfoSchema.plugin(passportLocalMongoose);
 
 const PlayerInfoSchema = new Schema ({
-  userName: String,
-  passWord: String
+  friendList: [String],
+  password: String
 });
 
 PlayerInfoSchema.plugin(passportLocalMongoose);

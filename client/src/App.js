@@ -12,6 +12,8 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import Home from "./components/Home.jsx";
 import NotFound from "./components/NotFound.jsx";
+import Friends from "./components/Friends.jsx";
+import CreateGame from "./components/CreateGame.jsx";
 
 import uuid from "uuid";
 
@@ -22,7 +24,10 @@ function App() {
   const routes = {
     "/login": () => <Login />,
     "/register": () => <Register />,
-    "/home": () => <Home />
+    "/home": () => <Home />,
+    "/friends": () => <Friends />,
+    "/createGame": () => <CreateGame />,
+    "/": () => <Home />
   };
 
   const routeResult = useRoutes(routes);
